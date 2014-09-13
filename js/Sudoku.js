@@ -1,10 +1,10 @@
 const size = 9;
-const defaultBoardIndex = 1;
+const defaultSampleBoardIndex = 1;
 
 function Sudoku()
 {
 	this.createEmptyBoard();
-	this.setSampleBoard(defaultBoardIndex);
+	this.loadSampleBoard(defaultSampleBoardIndex);
 }
 
 Sudoku.prototype.createEmptyBoard = function()
@@ -15,12 +15,12 @@ Sudoku.prototype.createEmptyBoard = function()
 		this.board[y] = new Array(size);
 		for (var x = 0; x < size; x++)
 		{
-			this.board[y][x] = null;
+			this.set(x ,y, null);
 		}
 	}
 }
 
-Sudoku.prototype.setSampleBoard = function(boardIndex)
+Sudoku.prototype.loadSampleBoard = function(boardIndex)
 {
 	var self = this;
 	return $.get('examples/board'+boardIndex+'.csv', function(csv)
@@ -30,8 +30,58 @@ Sudoku.prototype.setSampleBoard = function(boardIndex)
 		{
 			for (var x = 0; x < self.board[0].length; x++)
 			{
-				self.board[y][x] = (board[y][x] == " " || board[y][x] == "") ? null : board[y][x];
+				var isEmpty = (board[y][x] === " " || board[y][x] === "");
+				self.set(x, y, isEmpty ? null : parseInt(board[y][x]));
+				self.setLocked(x, y, true);
 			}
 		}
 	});
+}
+
+Sudoku.prototype.set = function(x, y, val)
+{
+	if (val && val < 1 || val > 9)
+	{
+		return;
+	}
+
+	this.board[y][x] = val;
+}
+
+Sudoku.prototype.get = function(x, y)
+{
+	var val = this.board[y][x];
+	if (!val)
+	{
+		// Space not filled in yet.
+		return null;
+	}
+	if (this.isLocked(x, y))
+	{
+		// Value is negative because its space is locked but ignore the negative sign during retrieval.
+		return Math.abs(val);
+	}
+
+	// Space is filled in.
+	return val;
+}
+
+Sudoku.prototype.setLocked = function(x, y, isLocked)
+{
+	var val = this.board[y][x];
+	if (!val)
+	{
+		// Can't lock an empty space.
+		return;
+	}
+
+	// To lock a space, make its value negative.
+	this.board[y][x] = Math.abs(val) * (isLocked ? -1 : 1);
+}
+
+Sudoku.prototype.isLocked = function(x, y)
+{
+	// A locked space has a negative value.
+	var val = this.board[y][x];
+	return (val && val < 0);
 }
