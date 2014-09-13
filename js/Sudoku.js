@@ -1,19 +1,22 @@
-const size = 9;
+const defaultBoardSize = 9;
 const defaultSampleBoardIndex = 1;
 
-function Sudoku()
+function Sudoku(loadSampleBoard)
 {
 	this.createEmptyBoard();
-	this.loadSampleBoard(defaultSampleBoardIndex);
+	if (loadSampleBoard)
+	{
+		this.loadSampleBoard(defaultSampleBoardIndex);
+	}
 }
 
 Sudoku.prototype.createEmptyBoard = function()
 {
-	this.board = new Array(size);
-	for (var y = 0; y < size; y++)
+	this.board = new Array(defaultBoardSize);
+	for (var y = 0; y < defaultBoardSize; y++)
 	{
-		this.board[y] = new Array(size);
-		for (var x = 0; x < size; x++)
+		this.board[y] = new Array(defaultBoardSize);
+		for (var x = 0; x < defaultBoardSize; x++)
 		{
 			this.set(x ,y, null);
 		}
@@ -26,9 +29,9 @@ Sudoku.prototype.loadSampleBoard = function(boardIndex)
 	return $.get('examples/board'+boardIndex+'.csv', function(csv)
 	{
 		var board = $.csv.toArrays(csv);
-		for (var y = 0; y < self.board.length; y++)
+		for (var y = 0; y < self.getHeight(); y++)
 		{
-			for (var x = 0; x < self.board[0].length; x++)
+			for (var x = 0; x < self.getWidth(); x++)
 			{
 				var isEmpty = (board[y][x] === " " || board[y][x] === "");
 				self.set(x, y, isEmpty ? null : parseInt(board[y][x]));
@@ -83,5 +86,15 @@ Sudoku.prototype.isLocked = function(x, y)
 {
 	// A locked space has a negative value.
 	var val = this.board[y][x];
-	return (val && val < 0);
+	return (val !== null && val < 0);
+}
+
+Sudoku.prototype.getHeight = function()
+{
+	return this.board.length;
+}
+
+Sudoku.prototype.getWidth = function()
+{
+	return this.board[0].length;
 }
