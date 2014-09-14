@@ -1,93 +1,52 @@
-const defaultBoardSize = 9;
-const defaultSampleBoardIndex = 1;
-
 function Sudoku()
 {
-	this.board = this.getEmptyBoard();
-}
-
-Sudoku.prototype.getEmptyBoard = function()
-{
-	var board = new Array(defaultBoardSize);
-	for (var y = 0; y < defaultBoardSize; y++)
-	{
-		board[y] = new Array(defaultBoardSize);
-		for (var x = 0; x < defaultBoardSize; x++)
-		{
-			board[y][x] = null;
-		}
-	}
-	return board;
+	this.board = new Board();
 }
 
 Sudoku.prototype.loadSampleBoard = function(boardIndex, callback)
 {
 	var self = this;
-	return $.get('/examples/board'+boardIndex+'.csv', function(csv)
-	{
-		var board = $.csv.toArrays(csv);
-		for (var y = 0; y < self.getHeight(); y++)
-		{
-			for (var x = 0; x < self.getWidth(); x++)
-			{
-				var isEmpty = (board[y][x] === " " || board[y][x] === "");
-				self.set(x, y, isEmpty ? null : parseInt(board[y][x]));
-				self.setLocked(x, y, true);
-			}
-		}
+	Board.loadBoardFromCSV('/examples/board'+boardIndex+'.csv', function(board){
+		self.board = board;
+		callback();
+	});
+}
+
+Sudoku.prototype.loadSampleSolution = function(boardIndex, callback)
+{
+	var self = this;
+	Board.loadBoardFromCSV('/examples/solution'+boardIndex+'.csv', function(board){
+		self.solution = board;
 		callback();
 	});
 }
 
 Sudoku.prototype.set = function(x, y, val)
 {
-	if (val && val < 1 || val > 9)
-	{
-		return;
-	}
-
-	this.board[y][x] = val;
+	this.board.set(x, y, val);
 }
 
 Sudoku.prototype.get = function(x, y)
 {
-	var val = this.board[y][x];
-	if (!val)
-	{
-		// Space not filled in yet.
-		return null;
-	}
-
-	// Ignore the negative sign if the space is locked.
-	return Math.abs(val);
+	return this.board.get(x, y);
 }
 
 Sudoku.prototype.setLocked = function(x, y, isLocked)
 {
-	var val = this.board[y][x];
-	if (!val)
-	{
-		// Can't lock an empty space.
-		return;
-	}
-
-	// To lock a space, make its value negative.
-	this.board[y][x] = Math.abs(val) * (isLocked ? -1 : 1);
+	this.board.setLocked(x, y, isLocked);
 }
 
 Sudoku.prototype.isLocked = function(x, y)
 {
-	// A locked space has a negative value.
-	var val = this.board[y][x];
-	return (val !== null && val < 0);
+	return this.board.isLocked(x, y)
 }
 
 Sudoku.prototype.getHeight = function()
 {
-	return this.board.length;
+	return this.board.getHeight();
 }
 
 Sudoku.prototype.getWidth = function()
 {
-	return this.board[0].length;
+	return this.board.getWidth();
 }
