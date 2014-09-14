@@ -1,22 +1,23 @@
 const defaultBoardSize = 9;
 const defaultSampleBoardIndex = 1;
 
-function Sudoku(loadSampleBoard)
+function Sudoku()
 {
-	this.createEmptyBoard();
+	this.board = this.getEmptyBoard();
 }
 
-Sudoku.prototype.createEmptyBoard = function()
+Sudoku.prototype.getEmptyBoard = function()
 {
-	this.board = new Array(defaultBoardSize);
+	var board = new Array(defaultBoardSize);
 	for (var y = 0; y < defaultBoardSize; y++)
 	{
-		this.board[y] = new Array(defaultBoardSize);
+		board[y] = new Array(defaultBoardSize);
 		for (var x = 0; x < defaultBoardSize; x++)
 		{
-			this.set(x, y, null);
+			board[y][x] = null;
 		}
 	}
+	return board;
 }
 
 Sudoku.prototype.loadSampleBoard = function(boardIndex, callback)
