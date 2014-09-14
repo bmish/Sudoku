@@ -55,3 +55,26 @@ QUnit.test("Locking a space on the board", function(assert){
 	assert.strictEqual(s.get(0,0), val, "(0,0) still has the same value after being unlocked");
 	assert.strictEqual(s.isLocked(0,0), false, "(0,0) is unlocked as expected");
 });
+
+QUnit.asyncTest("Loading in a sample board", function(assert){
+	var s = new Sudoku();
+	const sampleBoardIndex = 1;
+	s.loadSampleBoard(sampleBoardIndex, function(){
+		// Check a sample of spaces.
+
+		assert.strictEqual(s.get(0,0), 5, "(0,0) has the expected value");
+		assert.strictEqual(s.isLocked(0,0), true, "(0,0) is locked as expected");
+
+		assert.strictEqual(s.get(1,0), 3, "(1,0) has the expected value");
+		assert.strictEqual(s.isLocked(1,0), true, "(1,0) is locked as expected");
+
+		assert.strictEqual(s.get(2,0), null, "(2,0) is empty as expected");
+		assert.strictEqual(s.isLocked(2,0), false, "(2,0) is unlocked since its empty");
+
+		assert.strictEqual(s.get(0,1), 6, "(0,1) has the expected value");
+		assert.strictEqual(s.isLocked(0,1), true, "(0,1) is locked as expected");
+
+		// Done with this test.
+		QUnit.start();
+	})
+});
