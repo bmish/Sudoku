@@ -86,3 +86,20 @@ Sudoku.prototype.getCorrectSpacesCount = function()
 {
 	return this.correctSpacesCount;
 }
+
+Sudoku.draw = function(container)
+{
+	var s = new Sudoku();
+
+	const sampleBoardIndex = 1;
+	s.loadSampleBoard(sampleBoardIndex, function(){
+		s.loadSampleSolution(sampleBoardIndex, function(){
+			s.draw(container);
+		});
+	});
+}
+
+Sudoku.prototype.draw = function(container)
+{
+	this.board.draw(container);
+}

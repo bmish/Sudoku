@@ -97,3 +97,27 @@ Board.prototype.getWidth = function()
 {
 	return this.board[0].length;
 }
+
+Board.prototype.draw = function(container)
+{
+	var table = $("<table></table>").addClass("board");
+	container.append(table);
+	for (var y = 0; y < this.getHeight(); y++)
+	{
+		var tr = $("<tr></tr>");
+		table.append(tr);
+		for (var x = 0; x < this.getWidth(); x++)
+		{
+			var td = $("<td></td>").addClass("boardSpace");
+			if (this.get(x, y))
+			{
+				td.text(this.get(x, y));
+			}
+			if ((Math.floor(x / 3) % 2) != (Math.floor(y / 3) % 2))
+			{
+				td.addClass("boardSectionAlternating");
+			}
+			tr.append(td);
+		}
+	}
+}
