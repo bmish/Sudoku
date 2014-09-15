@@ -1,14 +1,15 @@
 function Sudoku()
 {
-	this.board = new Board();
+	this.board = new Board(this);
 	this.solution = null;
 	this.correctSpacesCount = 0;
+	this.container = $(document);
 }
 
 Sudoku.prototype.loadSampleBoard = function(boardIndex, callback)
 {
 	var self = this;
-	Board.loadBoardFromCSV('/examples/board'+boardIndex+'.csv', function(board, filledInSpacesCount){
+	Board.loadBoardFromCSV(this, '/examples/board'+boardIndex+'.csv', function(board, filledInSpacesCount){
 		self.board = board;
 		self.correctSpacesCount = filledInSpacesCount;
 		callback();
@@ -18,7 +19,7 @@ Sudoku.prototype.loadSampleBoard = function(boardIndex, callback)
 Sudoku.prototype.loadSampleSolution = function(boardIndex, callback)
 {
 	var self = this;
-	Board.loadBoardFromCSV('/examples/solution'+boardIndex+'.csv', function(board, filledInSpacesCount){
+	Board.loadBoardFromCSV(this, '/examples/solution'+boardIndex+'.csv', function(board, filledInSpacesCount){
 		self.solution = board;
 		callback();
 	});
@@ -57,7 +58,7 @@ Sudoku.prototype.set = function(x, y, val)
 
 		if (this.isSolved())
 		{
-			$.event.trigger({type: 'boardSolved'});
+			this.container.trigger({type: 'boardSolved'});
 		}
 	}
 
@@ -102,11 +103,18 @@ Sudoku.draw = function(container)
 	s.loadSampleBoard(sampleBoardIndex, function(){
 		s.loadSampleSolution(sampleBoardIndex, function(){
 			s.draw(container);
+
+			s.container.on("boardSolved", function(){
+				alert("Game solved!");
+			});
 		});
 	});
+
+	return s;
 }
 
 Sudoku.prototype.draw = function(container)
 {
+	this.container = container;
 	this.board.draw(container);
 }

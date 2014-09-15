@@ -1,14 +1,15 @@
 const defaultBoardSize = 9;
 
-function Board()
+function Board(sudoku)
 {
+	this.sudoku = sudoku;
 	this.board = Board.getEmptyBoard();
 }
 
-Board.loadBoardFromCSV = function(path, callback)
+Board.loadBoardFromCSV = function(sudoku, path, callback)
 {
 	return $.get(path, function(csv){
-		var board = new Board();
+		var board = new Board(sudoku);
 		var boardRaw = $.csv.toArrays(csv);
 		var filledInSpacesCount = 0;
 		for (var y = 0; y < boardRaw.length; y++)
@@ -133,7 +134,7 @@ Board.prototype.draw = function(container)
 				textbox.click(function(){this.select()}); // Auto-select any text in textbox for editing convenience.
 				textbox.change(function(e){
 					// Update the board with the new value.
-					self.set(e.target.dataset.x, e.target.dataset.y, parseInt(e.target.value));
+					self.sudoku.set(e.target.dataset.x, e.target.dataset.y, parseInt(e.target.value));
 				});
 				td.append(textbox);
 			}
