@@ -50,6 +50,11 @@ Sudoku.prototype.set = function(x, y, val)
 	this.updateCorrectSpacesCount(this.board.get(x, y), val, this.solution ? this.solution.get(x, y) : null);
 
 	this.board.set(x, y, val);
+
+	if (this.isSolved())
+	{
+		$.event.trigger({type: 'boardSolved'});
+	}
 }
 
 Sudoku.prototype.get = function(x, y)

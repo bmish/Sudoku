@@ -127,10 +127,54 @@ QUnit.asyncTest("Tracking the correct spaces count with a sample board", functio
 
 			// Experiment with space (0, 0).
 			s.set(0, 0, null); // Set to empty.
-			assert.strictEqual(s.isSolved(), false, "Board isn't solved after setting a space to empty.")
+			assert.strictEqual(s.isSolved(), false, "Board isn't solved after setting a space to empty.");
 
 			// Done with this test.
 			QUnit.start();
 		});
 	});
 });
+
+QUnit.asyncTest("Throwing an event went the game is solved", function(assert){
+	var s = new Sudoku();
+
+	// Listen for the solved event.
+	var sawEvent = false;
+	$(document).on("boardSolved", function(){
+		if (!sawEvent)
+		{
+			sawEvent = true;
+
+			assert.strictEqual(s.isSolved(), true, "Board is solved after seeing the solved event");
+
+			// We are done with the test once we receive this event.
+			QUnit.start();
+		}
+	});
+
+	const sampleBoardIndex = 1;
+	s.loadSampleBoard(sampleBoardIndex, function(){
+		s.loadSampleSolution(sampleBoardIndex, function(){
+			// Fill in all the correct values.
+			assert.strictEqual(s.isSolved(), false, "Board isn't solved before filling in all the correct values");
+			for (var y = 0; y < s.getHeight(); y++)
+			{
+				for (var x = 0; x < s.getWidth(); x++)
+				{
+					s.set(x, y, s.solution.get(x, y));
+				}
+			}
+
+			// Timeout in case we fail to receive the event.
+			setTimeout(function() {
+				if (!sawEvent)
+				{
+					assert.ok(false, "Fail the test if we timed out without seeing the event we expected.");
+
+					// Done with this test.
+					QUnit.start();
+				}
+			  }, 150);
+		});
+	});
+})
