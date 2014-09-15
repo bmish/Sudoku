@@ -47,12 +47,19 @@ Board.getEmptyBoard = function()
 
 Board.prototype.set = function(x, y, val)
 {
-	if (val && val < 1 || val > 9)
+	if (this.isLocked(x, y))
 	{
-		return;
+		return false;
+	}
+
+	if (val && (val < 1 || val > 9))
+	{
+		return false;
 	}
 
 	this.board[y][x] = val;
+
+	return true;
 }
 
 Board.prototype.get = function(x, y)

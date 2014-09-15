@@ -47,14 +47,21 @@ Sudoku.prototype.isSolved = function()
 
 Sudoku.prototype.set = function(x, y, val)
 {
-	this.updateCorrectSpacesCount(this.board.get(x, y), val, this.solution ? this.solution.get(x, y) : null);
+	var oldValue = this.board.get(x, y);
 
-	this.board.set(x, y, val);
+	var ret = this.board.set(x, y, val);
 
-	if (this.isSolved())
+	if (ret)
 	{
-		$.event.trigger({type: 'boardSolved'});
+		this.updateCorrectSpacesCount(oldValue, val, this.solution ? this.solution.get(x, y) : null);
+
+		if (this.isSolved())
+		{
+			$.event.trigger({type: 'boardSolved'});
+		}
 	}
+
+	return ret;
 }
 
 Sudoku.prototype.get = function(x, y)

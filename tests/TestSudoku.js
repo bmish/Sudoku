@@ -51,9 +51,16 @@ QUnit.test("Locking a space on the board", function(assert){
 	assert.strictEqual(s.get(0,0), val, "(0,0) still has the same value after being locked");
 	assert.strictEqual(s.isLocked(0,0), true, "(0,0) is locked as expected");
 
+	var val2 = 3;
+	s.set(0,0,val2);
+	assert.strictEqual(s.get(0,0), val, "(0,0) cannot be changed when locked");
+
 	s.setLocked(0,0,false);
 	assert.strictEqual(s.get(0,0), val, "(0,0) still has the same value after being unlocked");
 	assert.strictEqual(s.isLocked(0,0), false, "(0,0) is unlocked as expected");
+
+	s.set(0,0,val2);
+	assert.strictEqual(s.get(0,0), val2, "(0,0) can be changed when unlocked");
 });
 
 QUnit.asyncTest("Loading in a sample board", function(assert){
@@ -86,32 +93,36 @@ QUnit.asyncTest("Tracking the correct spaces count with a sample board", functio
 	assert.strictEqual(s.isSolved(), false, "Empty board is not solved");
 
 	const sampleBoardIndex = 1;
-	const sampleBoardStartingCorrectSpaces = 30;
+	const sampleBoardStartingCorrectSpacesCount = 30;
 	s.loadSampleBoard(sampleBoardIndex, function(){
 		s.loadSampleSolution(sampleBoardIndex, function(){
-			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces, "Sample board starts with correct number of spaces");
+			// Note: The spaces that are loaded in with the sample board will be locked.
+
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpacesCount, "Sample board starts with correct number of spaces");
 			assert.strictEqual(s.isSolved(), false, "Sample board does not start out solved");
 
-			// Experiment with space (0, 0).
+			// Experiment with locked space (0, 0).
 			var correctValue = s.solution.get(0, 0);
 			var incorrectValue = 1;
 
-			s.set(0, 0, correctValue); // Set from correct to correct value (no change).
-			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces, "Correct spaces count doesn't change when setting a space to its existing value");
+			s.set(0, 0, incorrectValue); // Attempt to set from correct to incorrect value.
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpacesCount, "Correct spaces count doesn't change when attempting to change a locked space");
 
-			s.set(0, 0, incorrectValue); // Set from correct to incorrect value.
-			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces - 1, "Correct spaces count decreases when changing a space from a correct to incorrect value");
-			s.set(0, 0, correctValue); // Set back to correct value.
-
-			// Experiment with space (2, 0).
+			// Experiment with unlocked space (2, 0).
 			correctValue = s.solution.get(2, 0);
 			incorrectValue = 1;
 
-			s.set(2, 0, incorrectValue); // Set from empty to incorrect value.
-			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces, "Correct spaces count doesn't change when setting a space from empty to an incorrect value");
+			s.set(2, 0, incorrectValue); // Set from empty (incorrect) to incorrect value.
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpacesCount, "Correct spaces count doesn't change when setting a space from empty to an incorrect value");
 
 			s.set(2, 0, correctValue); // Set from incorrect to correct value.
-			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces + 1, "Correct spaces count increases when changing a space from an incorrect to correct value");
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpacesCount + 1, "Correct spaces count increases when changing a space from an incorrect to correct value");
+
+			s.set(2, 0, correctValue); // Set from correct to correct value.
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpacesCount + 1, "Correct spaces count doesn't change when changing a space from a correct to correct value");
+
+			s.set(2, 0, incorrectValue); // Set from correct to empty (incorrect).
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpacesCount, "Correct spaces count decreases when changing a space from a correct to incorrect value");
 
 			// Fill in all the correct values.
 			assert.strictEqual(s.isSolved(), false, "Board isn't solved before filling in all the correct values");
@@ -125,8 +136,8 @@ QUnit.asyncTest("Tracking the correct spaces count with a sample board", functio
 			assert.strictEqual(s.isSolved(), true, "Board is solved after filling in all the correct values");
 			assert.strictEqual(s.getCorrectSpacesCount(), s.getWidth() * s.getHeight(), "Solved board has the correct spaces count");
 
-			// Experiment with space (0, 0).
-			s.set(0, 0, null); // Set to empty.
+			// Experiment with unlocked space (2, 0).
+			s.set(2, 0, null); // Set to empty.
 			assert.strictEqual(s.isSolved(), false, "Board isn't solved after setting a space to empty.");
 
 			// Done with this test.
