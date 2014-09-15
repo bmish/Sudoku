@@ -76,5 +76,61 @@ QUnit.asyncTest("Loading in a sample board", function(assert){
 
 		// Done with this test.
 		QUnit.start();
-	})
+	});
+});
+
+QUnit.asyncTest("Tracking the correct spaces count with a sample board", function(assert){
+	var s = new Sudoku();
+
+	assert.strictEqual(s.getCorrectSpacesCount(), 0, "Empty board has no correct spaces");
+	assert.strictEqual(s.isSolved(), false, "Empty board is not solved");
+
+	const sampleBoardIndex = 1;
+	const sampleBoardStartingCorrectSpaces = 30;
+	s.loadSampleBoard(sampleBoardIndex, function(){
+		s.loadSampleSolution(sampleBoardIndex, function(){
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces, "Sample board starts with correct number of spaces");
+			assert.strictEqual(s.isSolved(), false, "Sample board does not start out solved");
+
+			// Experiment with space (0, 0).
+			var correctValue = s.solution.get(0, 0);
+			var incorrectValue = 1;
+
+			s.set(0, 0, correctValue); // Set from correct to correct value (no change).
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces, "Correct spaces count doesn't change when setting a space to its existing value");
+
+			s.set(0, 0, incorrectValue); // Set from correct to incorrect value.
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces - 1, "Correct spaces count decreases when changing a space from a correct to incorrect value");
+			s.set(0, 0, correctValue); // Set back to correct value.
+
+			// Experiment with space (2, 0).
+			correctValue = s.solution.get(2, 0);
+			incorrectValue = 1;
+
+			s.set(2, 0, incorrectValue); // Set from empty to incorrect value.
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces, "Correct spaces count doesn't change when setting a space from empty to an incorrect value");
+
+			s.set(2, 0, correctValue); // Set from incorrect to correct value.
+			assert.strictEqual(s.getCorrectSpacesCount(), sampleBoardStartingCorrectSpaces + 1, "Correct spaces count increases when changing a space from an incorrect to correct value");
+
+			// Fill in all the correct values.
+			assert.strictEqual(s.isSolved(), false, "Board isn't solved before filling in all the correct values");
+			for (var y = 0; y < s.getHeight(); y++)
+			{
+				for (var x = 0; x < s.getWidth(); x++)
+				{
+					s.set(x, y, s.solution.get(x, y));
+				}
+			}
+			assert.strictEqual(s.isSolved(), true, "Board is solved after filling in all the correct values");
+			assert.strictEqual(s.getCorrectSpacesCount(), s.getWidth() * s.getHeight(), "Solved board has the correct spaces count");
+
+			// Experiment with space (0, 0).
+			s.set(0, 0, null); // Set to empty.
+			assert.strictEqual(s.isSolved(), false, "Board isn't solved after setting a space to empty.")
+
+			// Done with this test.
+			QUnit.start();
+		});
+	});
 });

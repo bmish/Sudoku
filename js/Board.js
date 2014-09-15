@@ -10,6 +10,7 @@ Board.loadBoardFromCSV = function(path, callback)
 	return $.get(path, function(csv){
 		var board = new Board();
 		var boardRaw = $.csv.toArrays(csv);
+		var filledInSpacesCount = 0;
 		for (var y = 0; y < boardRaw.length; y++)
 		{
 			for (var x = 0; x < boardRaw[0].length; x++)
@@ -19,9 +20,14 @@ Board.loadBoardFromCSV = function(path, callback)
 
 				// Any spaces we load in should be locked so the user can't change them.
 				board.setLocked(x, y, true);
+
+				if (!isEmpty)
+				{
+					filledInSpacesCount++;
+				}
 			}
 		}
-		callback(board);
+		callback(board, filledInSpacesCount);
 	});
 }
 
