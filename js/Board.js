@@ -100,6 +100,8 @@ Board.prototype.getWidth = function()
 
 Board.prototype.draw = function(container)
 {
+	var self = this;
+
 	var table = $("<table></table>").addClass("board");
 	container.append(table);
 	for (var y = 0; y < this.getHeight(); y++)
@@ -119,7 +121,13 @@ Board.prototype.draw = function(container)
 				var textbox = $("<input />").addClass("boardSpaceTextbox");
 				textbox.attr("type", "text");
 				textbox.attr("maxlength", 1);
+				textbox.attr("data-x", x);
+				textbox.attr("data-y", y);
 				textbox.click(function(){this.select()}); // Auto-select any text in textbox for editing convenience.
+				textbox.change(function(e){
+					// Update the board with the new value.
+					self.set(e.target.dataset.x, e.target.dataset.y, parseInt(e.target.value));
+				});
 				td.append(textbox);
 			}
 			if ((Math.floor(x / 3) % 2) != (Math.floor(y / 3) % 2))
