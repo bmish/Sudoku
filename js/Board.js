@@ -111,7 +111,16 @@ Board.prototype.draw = function(container)
 			var td = $("<td></td>").addClass("boardSpace");
 			if (this.get(x, y))
 			{
+				td.addClass("boardSpaceLocked");
 				td.text(this.get(x, y));
+			}
+			else
+			{
+				var textbox = $("<input />").addClass("boardSpaceTextbox");
+				textbox.attr("type", "text");
+				textbox.attr("maxlength", 1);
+				textbox.click(function(){this.select()}); // Auto-select any text in textbox for editing convenience.
+				td.append(textbox);
 			}
 			if ((Math.floor(x / 3) % 2) != (Math.floor(y / 3) % 2))
 			{
