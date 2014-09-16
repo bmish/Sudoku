@@ -136,6 +136,10 @@ Board.prototype.draw = function(container)
 					// Update the board with the new value.
 					self.sudoku.set(e.target.dataset.x, e.target.dataset.y, parseInt(e.target.value));
 				});
+				textbox.keypress(function(e){
+					// Only allow non-zero digits to be typed in this textbox.
+					return e.which >= '1'.charCodeAt(0) && e.which <= '9'.charCodeAt(0);
+				});
 				td.append(textbox);
 			}
 			if ((Math.floor(x / 3) % 2) != (Math.floor(y / 3) % 2))
