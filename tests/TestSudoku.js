@@ -146,7 +146,7 @@ QUnit.asyncTest("Tracking the correct spaces count with a sample board", functio
 	});
 });
 
-QUnit.asyncTest("Throwing an event went the game is solved", function(assert){
+QUnit.asyncTest("Throwing an event when the game is solved", function(assert){
 	var s = new Sudoku();
 
 	// Listen for the solved event.
