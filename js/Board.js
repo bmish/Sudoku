@@ -131,6 +131,7 @@ Board.prototype.draw = function(container)
 				textbox.attr("maxlength", 1);
 				textbox.attr("data-x", x);
 				textbox.attr("data-y", y);
+				textbox.attr("pattern", "[0-9]*"); // Ensure iOS shows the numeric keyboard.
 				textbox.click(function(){this.select()}); // Auto-select any text in textbox for editing convenience.
 				textbox.change(function(e){
 					// Update the board with the new value.
