@@ -122,10 +122,6 @@ Sudoku.draw = function(container)
 		s.loadSampleSolution(sampleBoardIndex, function(){
 			s.draw(container);
 
-			s.container.on("boardSolved", function(){
-				alert("Game solved!");
-			});
-
 			s.container.trigger({type: 'boardLoaded'});
 		});
 	});

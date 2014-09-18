@@ -19,4 +19,6 @@ boardLoaded = function(){
 boardSolved = function(){
 	// Stop the timer.
 	clearInterval(timer);
+
+	alert("Game solved in " + sec + " seconds!");
 }
