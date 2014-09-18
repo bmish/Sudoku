@@ -29,7 +29,22 @@ When the game is created, two boards are loaded in from CSV files: the initial b
 
 This is a constant O(1) time approach to checking if the board is solved since only one space needs to be checked on each move. However, this approach depends on knowing the solution ahead of time. If the solution was not supplied, the game would either need to compute the solution upfront or calculate if the current board is solved on each move.
 
+### Code structure
+* Sudoku engine
+  * js/Sudoku.js: The class that represents the game
+  * js/Board.js: The class that represents a game board
+  * css/Sudoku.css: The styling for the game board
+* App-specific logic
+  * index.html: The webpage that displays the game
+  * js/app.js: App logic including event handling for the UI
+  * css/app.css: The styling for the app webpage
+* Tests
+  * tests/index.html: The webpage that runs the tests
+  * tests/TestSudoku.js: The unit tests for the sudoku engine
+* examples: Sample boards in CSV format
+* vendor: Third-party libraries
+
 ### Future work
 * Show a UI to indicate what numbers are valid choices for each space
-* Replace the textbox in each space with a number-picking UI to eliminate the need for the keyboard to pop up on mobile devices
+* Replace the textbox in each space with a number-picking UI to eliminate the need for the on-screen keyboard to pop up on mobile devices
 * Incorporate jQuery Mobile to produce a UI that fits better on mobile devices
