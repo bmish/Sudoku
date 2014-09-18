@@ -107,6 +107,8 @@ Sudoku.draw = function(container)
 			s.container.on("boardSolved", function(){
 				alert("Game solved!");
 			});
+
+			s.container.trigger({type: 'boardLoaded'});
 		});
 	});
 
