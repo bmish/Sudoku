@@ -58,6 +58,11 @@ Board.prototype.set = function(x, y, val)
 		return false;
 	}
 
+	if (val == this.board[y][x])
+	{
+		return false;
+	}
+
 	this.board[y][x] = val;
 
 	return true;
