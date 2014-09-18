@@ -50,11 +50,18 @@ Sudoku.prototype.set = function(x, y, val)
 {
 	var oldValue = this.board.get(x, y);
 
-	var ret = this.board.set(x, y, val);
+	var success = this.board.set(x, y, val);
 
-	if (ret)
+	if (success)
 	{
 		this.updateCorrectSpacesCount(oldValue, val, this.solution ? this.solution.get(x, y) : null);
+
+		// Update the corresponding UI textbox for this space if its value doesn't match.
+		var textbox = $(".boardSpaceTextbox[data-x='"+x+"'][data-y='"+y+"']");
+		if (textbox && textbox.val() != val)
+		{
+			textbox.val(val);
+		}
 
 		if (this.isSolved())
 		{
@@ -62,7 +69,7 @@ Sudoku.prototype.set = function(x, y, val)
 		}
 	}
 
-	return ret;
+	return success;
 }
 
 Sudoku.prototype.get = function(x, y)
