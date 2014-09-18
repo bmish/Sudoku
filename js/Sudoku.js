@@ -52,6 +52,17 @@ Sudoku.prototype.solve = function()
 	}
 }
 
+Sudoku.prototype.clear = function()
+{
+	for (var y = 0; y < s.getHeight(); y++)
+	{
+		for (var x = 0; x < s.getWidth(); x++)
+		{
+			s.set(x, y, null);
+		}
+	}
+}
+
 Sudoku.prototype.isSolved = function()
 {
 	return this.correctSpacesCount == this.getWidth() * this.getHeight();
@@ -69,9 +80,9 @@ Sudoku.prototype.set = function(x, y, val)
 
 		// Update the corresponding UI textbox for this space if its value doesn't match.
 		var textbox = $(".boardSpaceTextbox[data-x='"+x+"'][data-y='"+y+"']");
-		if (textbox && val && textbox.val() != val)
+		if (textbox && textbox.val() != val)
 		{
-			textbox.val(val);
+			textbox.val(val ? val : "");
 		}
 
 		if (this.isSolved())
